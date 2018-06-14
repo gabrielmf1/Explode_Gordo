@@ -11,11 +11,11 @@ from pygame.locals import *
 from random import randrange
 from random import randint
 import random
-
+#pygame.mouse.get_focused(False)
 black = (0,0,0)
 
 myDisplay = pygame.display.set_mode((800, 600))
-pygame.display.set_caption("Jogo de gordinho")
+pygame.display.set_caption("Exploda o Gordo")
 
 clock = pygame.time.Clock()
 gordinhoexplode = True
@@ -32,7 +32,7 @@ def Tempo(t):
 
 def reestar():
     font = pygame.font.SysFont(None, 70)
-    text = font.render('Aperte espaço para reiniciar', True, black)
+    text = font.render('Aperte espaço para reiniciar!', True, black)
     myDisplay.blit(text,(60,300))
 
 
@@ -66,15 +66,15 @@ class Gordinho(pygame.sprite.Sprite):
             self.image = self.listagordo[0]
 
 
-        elif self.niveldegordura > 0 and self.niveldegordura < 10:
+        elif self.niveldegordura > 5 and self.niveldegordura <= 10:
             self.image = self.listagordo[1]
 
 
-        elif self.niveldegordura <= 20 and self.niveldegordura > 10:
+        elif self.niveldegordura <= 20 and self.niveldegordura > 15:
             self.image = self.listagordo[2]
 
 
-        elif self.niveldegordura >= 30:
+        elif self.niveldegordura == 29:
             self.explodindo = True
 
             self.image = self.listagordo[self.frame]
@@ -84,8 +84,9 @@ class Gordinho(pygame.sprite.Sprite):
 
     def move(self, pixels):
         self.rect.x += pixels
-
-
+        
+#    def stop(self):
+#        if 
 
 
 
@@ -128,7 +129,10 @@ gordinho_group.add(gordinho)
 comidasaudavel_group = pygame.sprite.Group()
 comidagorda_group = pygame.sprite.Group()
 
-
+myDisplay.fill(black)
+myfont = pygame.font.SysFont("monospace", 16)
+nivel_de_gordura_texto = myfont.render("Nível de Gordura = " +str(gordinho.niveldegordura), 1, (0,0,0))
+#nivel_de_diabetes_texto = myfont.render("Nível de Diabétes = " +str(gordinho.niveldediabetes), 1, (0,0,0))
 
 
 alimentos_saudaveis = ["abacaxi", "brocolis"]
@@ -167,13 +171,33 @@ while not gordinhoexplode:
     myDisplay.blit(background_image, background_position)
 
     clock.tick(60)
+#    if pygame.sprite.spritecollide(gordinho, comidasaudavel_group, True):
+#        if gordinho.niveldegordura >= 0:
+#            gordinho.niveldegordura -= 1
+#
+#    if pygame.sprite.spritecollide(gordinho, comidagorda_group, True):
+#        gordinho.niveldegordura += 1
+    
+    
     if pygame.sprite.spritecollide(gordinho, comidasaudavel_group, True):
         if gordinho.niveldegordura >= 0:
+            nivel_de_gordura_texto = myfont.render("Nível de Gordura = " +str(gordinho.niveldegordura - 1), 1, (0,0,0))
             gordinho.niveldegordura -= 1
 
     if pygame.sprite.spritecollide(gordinho, comidagorda_group, True):
         gordinho.niveldegordura += 1
+        nivel_de_gordura_texto = myfont.render("Nível de Gordura = " +str(gordinho.niveldegordura + 1), 1, (0,0,0))
 
+#    if pygame.sprite.spritecollide(gordinho, comidasaudavel_group, True):
+#        if gordinho.niveldegordura >= 0:
+#            nivel_de_gordura_texto = myfont.render("Nível de Gordura = " +str(gordinho.niveldegordura - 1), 1, (0,0,0))
+#            gordinho.niveldegordura -= 1
+#
+#    if pygame.sprite.spritecollide(gordinho, comidagorda_group, True):
+#        gordinho.niveldegordura += 1
+#        nivel_de_gordura_texto = myfont.render("Nível de Gordura = " +str(gordinho.niveldegordura + 1), 1, (0,0,0))
+#      
+#    
     #timer para cair alimento de tempos em tempos
     #dentro do timer, criar um objeto aleatorio(saudavel, gordo) atraves da funçao
     #como? aleatorizar pngs e os objetos
@@ -216,6 +240,9 @@ while not gordinhoexplode:
     #    novo_alimento.move()
         background_image = pygame.image.load("Restaurante2.jpg").convert()
         pressed_keys = pygame.key.get_pressed() #pega teclas pressionadas
+#        if gordinho.rect.x = 0 or gordinho.rect.x = 800:
+#            gordinho.stop()
+            
         if pressed_keys[pygame.K_LEFT]:
             gordinho.move(-20)
             background_image = pygame.image.load("Restaurante2.jpg").convert()
@@ -246,6 +273,7 @@ while not gordinhoexplode:
     gordinho_group.draw(background_image)
     comidasaudavel_group.draw(background_image)
     comidagorda_group.draw(background_image)
+    myDisplay.blit(nivel_de_gordura_texto, (570, 10))
     pygame.display.update()
 
 #    novo_alimento.draw(background_image)
